@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #f0f0f0;
+      scroll-behavior: smooth;
+    }
+
+    /* NAVBAR */
+    nav {
+      position: fixed;
+      top: 0; width: 100%;
+      background: #0f0f0fcc;
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 40px;
+      z-index: 100;
+      border-bottom: 1px solid #222;
+    }
+
+    nav .logo { font-size: 20px; font-weight: 700; color: #a78bfa; }
+
+    nav ul { list-style: none; display: flex; gap: 28px; }
+    nav ul a {
+      text-decoration: none;
+      color: #ccc;
+      font-size: 15px;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: #a78bfa; }
+
+    /* HERO */
+    #hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      background: radial-gradient(ellipse at center, #1e1b4b 0%, #0f0f0f 70%);
+    }
+
+    #hero h1 { font-size: 52px; font-weight: 800; margin-bottom: 16px; }
+    #hero h1 span { color: #a78bfa; }
+    #hero p { font-size: 18px; color: #aaa; max-width: 480px; margin-bottom: 32px; }
+
+    .btn {
+      padding: 12px 28px;
+      background: #a78bfa;
+      color: #0f0f0f;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #c4b5fd; }
+
+    /* ABOUT */
+    #about {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+
+    .section-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #a78bfa;
+    }
+
+    #about p {
+      font-size: 16px;
+      color: #bbb;
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .skill {
+      background: #1e1b4b;
+      color: #a78bfa;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      border: 1px solid #a78bfa44;
+    }
+
+    /* PROJECTS */
+    #projects {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #a78bfa;
+    }
+
+    .card-tag {
+      font-size: 12px;
+      color: #a78bfa;
+      background: #1e1b4b;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .card h3 { font-size: 18px; margin-bottom: 8px; }
+    .card p { font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 16px; }
+
+    .card-links { display: flex; gap: 12px; }
+    .card-links a {
+      font-size: 13px;
+      color: #a78bfa;
+      text-decoration: none;
+      border: 1px solid #a78bfa55;
+      padding: 4px 12px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .card-links a:hover { background: #a78bfa22; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: #444;
+      font-size: 14px;
+      border-top: 1px solid #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">rishi.dev</div>
+    <ul>
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <h1>Hi, I'm <span>Rishi</span> 👋</h1>
+    <p>A developer who builds clean, functional, and beautiful web experiences.</p>
+    <a href="#projects" class="btn">View My Work</a>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-title">About Me</div>
+    <p>
+      I'm a passionate developer with a love for building things that live on the internet.
+      I enjoy turning complex problems into simple, elegant solutions.
+    </p>
+    <p>
+      When I'm not coding, I'm exploring new technologies, contributing to open source,
+      or learning something new every day.
+    </p>
+    <div class="skills">
+      <span class="skill">React</span>
+      <span class="skill">JavaScript</span>
+      <span class="skill">Python</span>
+      <span class="skill">Node.js</span>
+      <span class="skill">HTML & CSS</span>
+      <span class="skill">Git & GitHub</span>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-title">Projects</div>
+    <div class="projects-grid">
+
+      <div class="card">
+        <span class="card-tag">React</span>
+        <h3>User List App</h3>
+        <p>A React app that fetches users from an API with live search, text highlighting, and pagination.</p>
+        <div class="card-links">
+          <a href="#">GitHub</a>
+          <a href="#">Live Demo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag">JavaScript</span>
+        <h3>Todo App</h3>
+        <p>A clean todo list with add, delete, and complete features. Data persists via localStorage.</p>
+        <div class="card-links">
+          <a href="#">GitHub</a>
+          <a href="#">Live Demo</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag">Python</span>
+        <h3>CSV Filter Tool</h3>
+        <p>A CLI tool that reads, filters, and exports CSV data based on user-defined conditions.</p>
+        <div class="card-links">
+          <a href="#">GitHub</a>
+          <a href="#">Live Demo</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2026 Rishi. Built with HTML, CSS & love.
+  </footer>
+
+</body>
+</html>
