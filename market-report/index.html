@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Market Intelligence Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --purple: #a78bfa;
+      --purple-dark: #1e1b4b;
+      --purple-mid: #4c1d95;
+      --bg: #0f0f0f;
+      --surface: #1a1a1a;
+      --surface2: #222;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --muted: #888;
+      --green: #34d399;
+      --red: #f87171;
+      --yellow: #fbbf24;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      background: #0f0f0fee;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 32px;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--purple);
+      text-decoration: none;
+    }
+
+    .nav-title {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* MAIN */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* HEADER */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .page-header h1 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .page-header h1 span { color: var(--purple); }
+
+    .page-header p {
+      color: var(--muted);
+      font-size: 15px;
+      max-width: 540px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+
+    .date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--purple-dark);
+      border: 1px solid #a78bfa33;
+      color: var(--purple);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* CONFIG PANEL */
+    .config-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .config-panel h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--purple);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .config-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .config-row input {
+      flex: 1;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .config-row input:focus { border-color: var(--purple); }
+    .config-row input::placeholder { color: #444; }
+
+    .key-note {
+      font-size: 12px;
+      color: #555;
+      margin-top: 8px;
+    }
+
+    .key-note a { color: var(--purple); text-decoration: none; }
+
+    /* BUTTONS */
+    .btn-primary {
+      padding: 11px 24px;
+      background: var(--purple);
+      color: #0f0f0f;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover { background: #c4b5fd; }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      padding: 9px 18px;
+      background: transparent;
+      color: var(--purple);
+      border: 1px solid #a78bfa44;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: #a78bfa11; }
+
+    /* GENERATE ROW */
+    .generate-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    /* LOADING STATE */
+    .loading-panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .loading-panel.active { display: block; }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #222;
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-panel h3 { font-size: 16px; margin-bottom: 8px; }
+    .loading-panel p { color: var(--muted); font-size: 14px; }
+
+    .phase-progress {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .phase-chip {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      color: #555;
+      transition: all 0.3s;
+    }
+
+    .phase-chip.active {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: var(--purple-dark);
+    }
+
+    .phase-chip.done {
+      border-color: var(--green);
+      color: var(--green);
+      background: #064e3b33;
+    }
+
+    /* STREAM BOX */
+    .stream-box {
+      display: none;
+      background: #111;
+      border: 1px solid #1e1b4b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #a78bfa99;
+      max-height: 120px;
+      overflow-y: auto;
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .stream-box.active { display: block; }
+
+    /* REPORT */
+    .report-container {
+      display: none;
+    }
+
+    .report-container.active { display: block; }
+
+    /* Report sections */
+    .report-meta {
+      background: linear-gradient(135deg, #1e1b4b, #0f0f0f);
+      border: 1px solid #a78bfa33;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 12px;
+    }
+
+    .report-meta-left h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .report-meta-left p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .bias-badge {
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    .bias-bullish { background: #064e3b; color: var(--green); border: 1px solid var(--green); }
+    .bias-bearish { background: #450a0a; color: var(--red); border: 1px solid var(--red); }
+    .bias-neutral { background: #451a03; color: var(--yellow); border: 1px solid var(--yellow); }
+
+    /* Report content rendered as markdown-like HTML */
+    .report-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .report-section {
+      border-bottom: 1px solid var(--border);
+      padding: 24px;
+    }
+
+    .report-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, #a78bfa33, transparent);
+    }
+
+    /* Rendered markdown styles */
+    .md-content h1 { font-size: 20px; margin: 0 0 12px; color: var(--text); }
+    .md-content h2 { font-size: 17px; margin: 18px 0 10px; color: var(--purple); }
+    .md-content h3 { font-size: 15px; margin: 14px 0 8px; color: #c4b5fd; }
+    .md-content h4 { font-size: 14px; margin: 12px 0 6px; color: #ddd; font-weight: 600; }
+    .md-content p { font-size: 14px; color: #ccc; line-height: 1.7; margin-bottom: 10px; }
+    .md-content ul, .md-content ol { padding-left: 20px; margin-bottom: 10px; }
+    .md-content li { font-size: 14px; color: #ccc; line-height: 1.7; margin-bottom: 4px; }
+    .md-content strong { color: var(--text); font-weight: 700; }
+    .md-content em { color: #c4b5fd; font-style: italic; }
+    .md-content code {
+      background: #222;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--purple);
+    }
+    .md-content pre {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+    .md-content pre code { background: none; padding: 0; }
+    .md-content blockquote {
+      border-left: 3px solid var(--purple);
+      padding: 10px 16px;
+      background: #1e1b4b33;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 12px;
+    }
+    .md-content blockquote p { color: #bbb; margin: 0; }
+    .md-content hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+    .md-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    .md-content th {
+      background: var(--purple-dark);
+      color: var(--purple);
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+      border: 1px solid #333;
+    }
+    .md-content td {
+      padding: 7px 12px;
+      border: 1px solid #222;
+      color: #ccc;
+    }
+    .md-content tr:nth-child(even) td { background: #1a1a1a; }
+
+    /* COPY BUTTON */
+    .copy-row {
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background: #111;
+      gap: 10px;
+    }
+
+    /* ERROR */
+    .error-box {
+      display: none;
+      background: #450a0a;
+      border: 1px solid var(--red);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: var(--red);
+    }
+
+    .error-box.active { display: block; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+      color: #444;
+      max-width: 360px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      main { padding: 24px 16px 60px; }
+      .page-header h1 { font-size: 26px; }
+      .config-row { flex-direction: column; }
+      .report-meta { flex-direction: column; }
+      nav { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../" class="nav-logo">rishi.dev</a>
+  <div class="nav-title">
+    <span class="live-dot"></span>
+    Market Intelligence
+  </div>
+</nav>
+
+<main>
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>Daily <span>Market</span> Intelligence</h1>
+    <p>AI-powered buy-side morning brief — macro sweep, smart money flows, and today's trading prediction.</p>
+    <div class="date-badge" id="dateBadge">
+      📅 Loading date...
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="config-panel">
+    <h2>⚙️ Configuration</h2>
+    <div class="config-row">
+      <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off" />
+    </div>
+    <div class="key-note">
+      Your Anthropic API key — stored locally in your browser only, never sent anywhere except Anthropic's API.
+      Get one at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <div class="generate-row">
+    <button class="btn-primary" id="generateBtn" onclick="generateReport()">
+      <span>▶</span> Generate Morning Report
+    </button>
+    <button class="btn-secondary" id="clearBtn" onclick="clearReport()" style="display:none">
+      Clear
+    </button>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- LOADING -->
+  <div class="loading-panel" id="loadingPanel">
+    <div class="spinner"></div>
+    <h3>Conducting Intelligence Sweep...</h3>
+    <p>Analyzing global markets, macro data, flows, and sentiment</p>
+    <div class="phase-progress">
+      <div class="phase-chip" id="chip1">Phase 1 · Macro</div>
+      <div class="phase-chip" id="chip2">Phase 2 · Economic</div>
+      <div class="phase-chip" id="chip3">Phase 3 · Flows</div>
+      <div class="phase-chip" id="chip4">Phase 4 · Catalysts</div>
+      <div class="phase-chip" id="chip5">Phase 5 · Sentiment</div>
+      <div class="phase-chip" id="chip6">Phase 6 · Synthesis</div>
+    </div>
+    <div class="stream-box" id="streamBox"></div>
+  </div>
+
+  <!-- REPORT -->
+  <div class="report-container" id="reportContainer">
+    <div class="report-content" id="reportContent"></div>
+    <div class="copy-row">
+      <button class="btn-secondary" onclick="copyReport()">📋 Copy Raw Text</button>
+    </div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="icon">📊</div>
+    <h3>No report generated yet</h3>
+    <p>Enter your Anthropic API key above and click Generate to get today's full market intelligence brief.</p>
+  </div>
+
+</main>
+
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+
+const SYSTEM_PROMPT = `You are an elite buy-side market strategist and macroeconomic analyst.
+Your task is to conduct a comprehensive morning intelligence sweep and deliver a structured daily
+stock market prediction report for today's US trading session. Be specific, data-driven, and direct.
+Use current knowledge for your analysis — if you have a web_search tool, use it extensively.
+Format your response in clean Markdown with clear section headers.`;
+
+const USER_PROMPT = `Conduct a comprehensive morning market intelligence sweep for today's US trading session (${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}) and deliver the full structured report below.
+
+## PHASE 1 — MACRO & GEOPOLITICAL SWEEP
+Analyze:
+1. **Global overnight developments**: Asian and European market moves (Nikkei, Hang Seng, Shanghai, FTSE, DAX, CAC 40, STOXX 600). Any circuit breakers, flash crashes, or gap moves?
+2. **Geopolitical risk**: Breaking geopolitical news — wars, sanctions, diplomatic tensions, elections. Quantify risk level (low/medium/high/critical) and explain market implications.
+3. **Central bank signals**: Any statements from Fed, ECB, BOJ, BOE, or PBoC in last 24 hours? Rate decisions, meeting minutes, hawkish/dovish pivots?
+4. **Currency and bond markets**: DXY Dollar Index direction. US Treasury yields (2Y, 10Y, 30Y). Yield curve status — flattening, steepening, or inverted?
+
+## PHASE 2 — US ECONOMIC DATA & LABOR MARKET
+Analyze:
+5. **Today's scheduled economic releases**: What data drops today (CPI, PPI, NFP, jobless claims, retail sales, PMI, etc.)? Consensus vs. prior? Beat/miss implications?
+6. **Labor market health**: Unemployment rate trend, jobless claims, NFP wage growth.
+7. **Inflation pulse**: CPI vs PCE status. Fed next move probability.
+8. **Consumer and corporate health**: Retail sales, credit delinquency trends, earnings revisions.
+
+## PHASE 3 — MARKET MICROSTRUCTURE & SMART MONEY FLOWS
+Analyze:
+9. **Futures and pre-market**: S&P 500 (ES), Nasdaq (NQ), Dow (YM), Russell 2000 (RTY) futures. Gap up or down?
+10. **Options market signals**: VIX level and trend. Put/call ratio. Unusual options activity in SPY, QQQ, AAPL, NVDA, TSLA.
+11. **Smart money / institutional flows**: Recent 13F filings, insider activity, hedge fund positioning. Where is institutional money rotating?
+12. **Sector rotation**: Which sectors are outperforming/underperforming YTD and past 5 days? What does this say about the business cycle?
+13. **Credit markets**: HYG and LQD credit spread direction — widening (risk-off) or tightening (risk-on)?
+
+## PHASE 4 — EARNINGS, CATALYSTS & SECTOR NEWS
+Analyze:
+14. **Earnings today**: Major companies reporting pre-market or after-hours. EPS/revenue consensus. Implied option moves.
+15. **Analyst upgrades/downgrades**: Significant analyst actions today. Which stocks reacting most?
+16. **M&A, IPOs, corporate events**: Announced deals, buybacks, dividend changes, IPOs pricing.
+17. **Commodity pulse**: WTI crude, Brent, natural gas, gold, silver, copper prices. Supply disruptions, OPEC decisions.
+18. **Crypto correlation**: Is Bitcoin acting as risk-on barometer? In line with equities or diverging?
+
+## PHASE 5 — SENTIMENT & NARRATIVE ANALYSIS
+Analyze:
+19. **Financial media narrative**: Dominant narrative on Bloomberg, Reuters, WSJ, CNBC, FT today.
+20. **Social sentiment**: Retail trader activity on Reddit (r/wallstreetbets, r/stocks), StockTwits, financial Twitter. Meme stock activity or short squeeze candidates.
+21. **Fear & Greed Index**: CNN Fear & Greed reading. Shift in past week.
+22. **Technical picture — SPX**: SPX relative to 20-day, 50-day, 200-day moving averages. Key support/resistance. RSI status.
+
+## PHASE 6 — SYNTHESIS & PREDICTION
+
+Now synthesize all findings into this exact structure:
+
+### 📊 TODAY'S MARKET PREDICTION REPORT
+
+**Overall Market Bias**: [Strongly Bullish / Mildly Bullish / Neutral / Mildly Bearish / Strongly Bearish]
+
+**Confidence Level**: [1–10] — Explain why.
+
+**Predicted SPX Range for Today**: [Low] – [High]
+**Opening Direction**: Gap up / Gap down / Flat open — by approximately X points
+**Intraday Pattern Likely**: (e.g., gap-and-go, fade the open, chop, trend day, reversal)
+
+---
+
+**Bull Case** (probability %):
+- 3–5 strongest bullish catalysts
+- Sectors that would lead
+- Intraday confirmation signals
+
+**Bear Case** (probability %):
+- 3–5 strongest bearish risks
+- Sectors hit hardest
+- Intraday confirmation signals
+
+**Base Case** (probability %):
+- Most likely outcome
+- Narrative arc of the trading day
+
+---
+
+**Top 3 Sectors to Watch**: [With reasoning]
+**Top 3 Tickers to Watch**: [With reasoning — analytical focus only, no buy/sell advice]
+**Key Levels to Watch on SPX**: [Support 1, Support 2 / Resistance 1, Resistance 2]
+**Wild Card Risk**: One unexpected event that could invalidate the base case
+
+---
+
+**Smart Money Summary**: One paragraph on where institutional and sophisticated capital appears positioned based on bonds, volatility, sector flows, options, and credit signals.
+
+**Final Analyst Note**: 2–3 sentences plain-English summary briefing a portfolio manager before the opening bell.`;
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+let rawReportText = '';
+let isGenerating = false;
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Set date badge
+  const now = new Date();
+  document.getElementById('dateBadge').textContent =
+    '📅 ' + now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Load saved API key
+  const saved = localStorage.getItem('anthropic_api_key');
+  if (saved) document.getElementById('apiKeyInput').value = saved;
+
+  // Save key on change
+  document.getElementById('apiKeyInput').addEventListener('change', () => {
+    const val = document.getElementById('apiKeyInput').value.trim();
+    if (val) localStorage.setItem('anthropic_api_key', val);
+  });
+});
+
+// ─── PHASE CHIPS ─────────────────────────────────────────────────────────────
+
+function setPhase(n) {
+  for (let i = 1; i <= 6; i++) {
+    const chip = document.getElementById(`chip${i}`);
+    if (i < n) chip.className = 'phase-chip done';
+    else if (i === n) chip.className = 'phase-chip active';
+    else chip.className = 'phase-chip';
+  }
+}
+
+function appendStream(text) {
+  const box = document.getElementById('streamBox');
+  box.classList.add('active');
+  box.textContent += text;
+  box.scrollTop = box.scrollHeight;
+}
+
+// ─── MARKDOWN RENDERER ───────────────────────────────────────────────────────
+
+function renderMarkdown(md) {
+  // Escape HTML in code blocks first, then process the rest
+  let html = md;
+
+  // Fenced code blocks
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<pre><code class="lang-${lang}">${escaped}</code></pre>`;
+  });
+
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Headers
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+  // Bold + italic
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Blockquotes
+  html = html.replace(/^> (.+)$/gm, '<blockquote><p>$1</p></blockquote>');
+
+  // HR
+  html = html.replace(/^---+$/gm, '<hr>');
+
+  // Unordered lists
+  html = html.replace(/^([ \t]*)[-*+] (.+)$/gm, (_, indent, item) => {
+    const depth = Math.floor(indent.length / 2);
+    return `<li style="margin-left:${depth * 16}px">${item}</li>`;
+  });
+  html = html.replace(/(<li[^>]*>[\s\S]*?<\/li>)/g, (m) => {
+    return m.startsWith('<ul>') ? m : `<ul>${m}</ul>`;
+  });
+  // wrap consecutive <li> into <ul>
+  html = html.replace(/(<li[^>]*>.*?<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`);
+
+  // Ordered lists
+  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*?<\/li>\n?)+/g, (m) => {
+    if (m.includes('<ul>')) return m;
+    return `<ol>${m}</ol>`;
+  });
+
+  // Paragraphs — wrap lines not already wrapped in a block element
+  html = html.replace(/^(?!<[houpbr]|<li|<\/|$)(.+)$/gm, '<p>$1</p>');
+
+  // Line breaks
+  html = html.replace(/\n\n+/g, '\n');
+
+  return html;
+}
+
+// ─── DETECT BIAS ─────────────────────────────────────────────────────────────
+
+function detectBias(text) {
+  const lower = text.toLowerCase();
+  if (lower.includes('strongly bullish')) return 'strongly-bullish';
+  if (lower.includes('mildly bullish')) return 'mildly-bullish';
+  if (lower.includes('strongly bearish')) return 'strongly-bearish';
+  if (lower.includes('mildly bearish')) return 'mildly-bearish';
+  return 'neutral';
+}
+
+function biasBadgeHTML(text) {
+  const bias = detectBias(text);
+  const labels = {
+    'strongly-bullish': { label: '📈 Strongly Bullish', cls: 'bias-bullish' },
+    'mildly-bullish':   { label: '📈 Mildly Bullish',   cls: 'bias-bullish' },
+    'strongly-bearish': { label: '📉 Strongly Bearish', cls: 'bias-bearish' },
+    'mildly-bearish':   { label: '📉 Mildly Bearish',   cls: 'bias-bearish' },
+    'neutral':          { label: '↔️ Neutral',           cls: 'bias-neutral' },
+  };
+  const b = labels[bias] || labels['neutral'];
+  return `<span class="bias-badge ${b.cls}">${b.label}</span>`;
+}
+
+// ─── RENDER REPORT ───────────────────────────────────────────────────────────
+
+function renderReport(text) {
+  rawReportText = text;
+
+  const content = document.getElementById('reportContent');
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  // Split at phase 6 synthesis section if possible
+  const synthesisIdx = text.indexOf('## PHASE 6') > -1
+    ? text.indexOf('## PHASE 6')
+    : text.indexOf('📊 TODAY');
+
+  const fullContent = renderMarkdown(text);
+
+  content.innerHTML = `
+    <div class="report-meta">
+      <div class="report-meta-left">
+        <h2>Morning Market Intelligence Brief</h2>
+        <p>${dateStr} · Generated at ${timeStr}</p>
+      </div>
+      ${biasBadgeHTML(text)}
+    </div>
+    <div class="report-section">
+      <div class="section-label">Full Intelligence Report</div>
+      <div class="md-content">${fullContent}</div>
+    </div>
+  `;
+
+  document.getElementById('reportContainer').classList.add('active');
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('clearBtn').style.display = 'inline-block';
+}
+
+// ─── GENERATE ────────────────────────────────────────────────────────────────
+
+async function generateReport() {
+  if (isGenerating) return;
+
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (!apiKey) {
+    showError('Please enter your Anthropic API key to generate a report.');
+    return;
+  }
+
+  if (!apiKey.startsWith('sk-ant-')) {
+    showError('Invalid API key format. Anthropic API keys start with "sk-ant-".');
+    return;
+  }
+
+  localStorage.setItem('anthropic_api_key', apiKey);
+
+  // Reset UI
+  clearError();
+  isGenerating = true;
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('generateBtn').innerHTML = '<span>⏳</span> Generating...';
+  document.getElementById('reportContainer').classList.remove('active');
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('loadingPanel').classList.add('active');
+  document.getElementById('streamBox').textContent = '';
+  document.getElementById('streamBox').classList.remove('active');
+
+  setPhase(1);
+
+  // Animate phase chips with estimated timing
+  const phaseTimings = [0, 8000, 16000, 24000, 32000, 40000];
+  phaseTimings.forEach((t, i) => {
+    if (i > 0) setTimeout(() => setPhase(i + 1), t);
+  });
+
+  try {
+    // Build the request
+    const requestBody = {
+      model: 'claude-sonnet-4-6',
+      max_tokens: 8000,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: USER_PROMPT }],
+      stream: true
+    };
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      const msg = errData?.error?.message || `HTTP ${response.status}: ${response.statusText}`;
+      throw new Error(msg);
+    }
+
+    // Stream the response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            const chunk = evt.delta.text;
+            fullText += chunk;
+            appendStream(chunk);
+          }
+        } catch (_) {}
+      }
+    }
+
+    // Done
+    setPhase(7); // mark all done
+    for (let i = 1; i <= 6; i++) {
+      document.getElementById(`chip${i}`).className = 'phase-chip done';
+    }
+
+    setTimeout(() => {
+      document.getElementById('loadingPanel').classList.remove('active');
+      renderReport(fullText);
+    }, 400);
+
+  } catch (err) {
+    document.getElementById('loadingPanel').classList.remove('active');
+    document.getElementById('emptyState').style.display = 'block';
+    showError(`Error: ${err.message}`);
+  } finally {
+    isGenerating = false;
+    document.getElementById('generateBtn').disabled = false;
+    document.getElementById('generateBtn').innerHTML = '<span>▶</span> Generate Morning Report';
+  }
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+function clearReport() {
+  rawReportText = '';
+  document.getElementById('reportContainer').classList.remove('active');
+  document.getElementById('reportContent').innerHTML = '';
+  document.getElementById('emptyState').style.display = 'block';
+  document.getElementById('clearBtn').style.display = 'none';
+  clearError();
+}
+
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.textContent = msg;
+  box.classList.add('active');
+}
+
+function clearError() {
+  const box = document.getElementById('errorBox');
+  box.textContent = '';
+  box.classList.remove('active');
+}
+
+async function copyReport() {
+  if (!rawReportText) return;
+  try {
+    await navigator.clipboard.writeText(rawReportText);
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  } catch (_) {
+    showError('Could not copy to clipboard.');
+  }
+}
+</script>
+</body>
+</html>
